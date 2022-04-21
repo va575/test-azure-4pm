@@ -15,8 +15,8 @@ COPY ./src ./src
 RUN mvn clean install -Dmaven.test.skip=true
 #Stage 2
 # set base image for second stage
-FROM adoptopenjdk/openjdk11:jre-11.0.9_11-alpine
+FROM adoptopenjdk/openjdk11:jre-11.0.9_11-alpine as stage2
 # set deployment directory
 WORKDIR /opt/demo
 # copy over the built artifact from the maven image
-COPY --from=stage1 /opt/demo/target/demo.jar /opt/demo
+COPY --from=stage1 /opt/demo/target/demo-0.0.1-SNAPSHOT.jar /opt/demo
