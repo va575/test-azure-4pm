@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: testazure1234.azurecr.io
+        username: ${{ secrets.acr_testazure1234_username }}
+        password: ${{ secrets.acr_testazure1234_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t testazure1234.azurecr.io/akstest1234:${{ github.sha }} --label dockerfile-path=Dockerfile
+        docker push testazure1234.azurecr.io/akstest1234:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_akstest1234_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep aks-test1234860f | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace aks-test1234860f`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: aks-test1234860f
+        container-registry-url: testazure1234.azurecr.io
+        container-registry-username: ${{ secrets.acr_testazure1234_username }}
+        container-registry-password: ${{ secrets.acr_testazure1234_password }}
+        secret-name: akstest1234dockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: aks-test1234860f
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          testazure1234.azurecr.io/akstest1234:${{ github.sha }}
+        imagepullsecrets: |
+          akstest1234dockerauth
