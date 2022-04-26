@@ -4,7 +4,7 @@ FROM maven:3.6.3-adoptopenjdk-11 as stage1
 # speed up Maven JVM a bit
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
-COPY settings.xml ~/.m2/ 
+COPY settings.xml /usr/share/maven/ref/
 # set working directory
 WORKDIR /opt/demo
 # copy just pom.xml
