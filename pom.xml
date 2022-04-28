@@ -24,7 +24,7 @@
 	</parent>
 	<groupId>com.azure.test</groupId>
 	<artifactId>test-repo</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
