@@ -21,8 +21,8 @@ FROM adoptopenjdk/openjdk11:jre-11.0.9_11-alpine as stage2
 # set deployment directory
 WORKDIR /opt/demo
 # copy over the built artifact from the maven image
-COPY --from=stage1 /opt/demo/target/demo-0.0.1-SNAPSHOT.jar /opt/demo
+COPY --from=stage1 /opt/demo/target/test-repo*.jar /opt/demo/test-repo.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/opt/demo/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","/opt/demo/test-repo.jar"]
